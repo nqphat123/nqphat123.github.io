@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bầu Cua Tôm Cá Online</title>
+    <title>Bầu Cua Tôm Cá Online - Có Cược</title>
     <style>
         * {
             margin: 0;
@@ -35,6 +35,52 @@
             margin-bottom: 10px;
         }
 
+        .name-input-section {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .name-input-section input {
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: 2px solid white;
+            border-radius: 10px;
+            margin-right: 10px;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .name-input-section button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .name-input-section button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .money-display {
+            background: rgba(255,215,0,0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            color: white;
+            font-weight: bold;
+            margin: 10px;
+            border: 2px solid gold;
+        }
+
         .online-users {
             background: rgba(255,255,255,0.2);
             padding: 10px 20px;
@@ -48,6 +94,14 @@
             display: grid;
             grid-template-columns: 1fr 300px;
             gap: 20px;
+            opacity: 0.3;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .main-content.active {
+            opacity: 1;
+            pointer-events: all;
         }
 
         .game-board {
@@ -79,6 +133,29 @@
             background: white;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .board-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .board-item.selected {
+            background: #ffe6e6;
+            border-color: #ff6b6b;
+        }
+
+        .board-item.winning {
+            background: #e6ffe6;
+            border-color: #4CAF50;
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .board-item::before {
@@ -104,6 +181,75 @@
             color: #d4af37;
             z-index: 1;
             text-transform: uppercase;
+        }
+
+        .bet-amount {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.9em;
+            z-index: 2;
+        }
+
+        .betting-controls {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .betting-controls h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .betting-controls input {
+            padding: 10px;
+            font-size: 1.1em;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            width: 200px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        .betting-controls button {
+            padding: 10px 30px;
+            font-size: 1.1em;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .betting-controls button:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .betting-controls button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .quick-bet-buttons {
+            margin: 10px 0;
+        }
+
+        .quick-bet-buttons button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            font-size: 0.9em;
+            background: #4CAF50;
         }
 
         .dice-container {
@@ -172,6 +318,8 @@
             border-radius: 20px;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-height: 800px;
+            overflow-y: auto;
         }
 
         .history-panel h2 {
@@ -181,8 +329,36 @@
             font-size: 1.5em;
         }
 
+        .players-list {
+            margin-bottom: 20px;
+        }
+
+        .player-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-item.me {
+            background: #e3f2fd;
+            border: 2px solid #2196F3;
+        }
+
+        .player-name {
+            font-weight: bold;
+        }
+
+        .player-money {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
         .history-list {
-            max-height: 600px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
@@ -216,6 +392,52 @@
             font-weight: bold;
         }
 
+        .result-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            z-index: 1000;
+            text-align: center;
+            display: none;
+            min-width: 300px;
+        }
+
+        .result-message.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .result-message.win {
+            border: 5px solid #4CAF50;
+        }
+
+        .result-message.lose {
+            border: 5px solid #f44336;
+        }
+
+        .result-message h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .result-message.win h2 {
+            color: #4CAF50;
+        }
+
+        .result-message.lose h2 {
+            color: #f44336;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -234,6 +456,30 @@
                 height: 70px;
                 font-size: 2.5em;
             }
+
+            .name-input-section {
+                display: block;
+            }
+
+            .name-input-section input {
+                margin-bottom: 10px;
+                margin-right: 0;
+                width: 100%;
+            }
+
+            .name-input-section button {
+                width: 100%;
+            }
+
+            .betting-controls input {
+                width: 100%;
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+
+            .betting-controls button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -241,37 +487,69 @@
     <div class="container">
         <div class="header">
             <h1>🎲 BẦU CUA TÔM CÁ 🎲</h1>
+            
+            <div id="nameSection" class="name-input-section">
+                <input type="text" id="nameInput" placeholder="Nhập tên của bạn..." maxlength="20" autofocus>
+                <button onclick="joinGame()" id="joinButton">Vào Chơi</button>
+            </div>
+
+            <div id="moneyDisplay" class="money-display" style="display: none;">
+                💰 Tiền: <span id="myMoney">10000</span> đ
+            </div>
+
             <div class="online-users">
-                <span id="usersList">👥 Đang kết nối...</span>
+                <span id="usersList">👥 Chưa kết nối</span>
             </div>
         </div>
 
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <div class="game-board">
-                <div class="board-grid">
-                    <div class="board-item">
+                <div class="betting-controls" id="bettingControls">
+                    <h3>Đặt Cược</h3>
+                    <div id="selectedBet" style="margin-bottom: 10px; color: #666;">
+                        Chọn 1 ô để đặt cược
+                    </div>
+                    <div class="quick-bet-buttons">
+                        <button onclick="setQuickBet(100)">100</button>
+                        <button onclick="setQuickBet(500)">500</button>
+                        <button onclick="setQuickBet(1000)">1K</button>
+                        <button onclick="setQuickBet(5000)">5K</button>
+                    </div>
+                    <input type="number" id="betAmount" placeholder="Số tiền cược" min="0" step="100">
+                    <button onclick="placeBet()" id="placeBetBtn" disabled>Đặt Cược</button>
+                    <button onclick="clearBet()" style="background: #f44336; margin-left: 10px;">Xóa</button>
+                </div>
+
+                <div class="board-grid" id="boardGrid">
+                    <div class="board-item" data-symbol="nai" onclick="selectBet('nai', '🦌')">
                         <div class="board-icon">🦌</div>
                         <div class="board-label">Nai</div>
+                        <div class="bet-amount" id="bet-nai" style="display: none;">0</div>
                     </div>
-                    <div class="board-item">
+                    <div class="board-item" data-symbol="bau" onclick="selectBet('bau', '🎃')">
                         <div class="board-icon">🎃</div>
                         <div class="board-label">Bầu</div>
+                        <div class="bet-amount" id="bet-bau" style="display: none;">0</div>
                     </div>
-                    <div class="board-item">
+                    <div class="board-item" data-symbol="ga" onclick="selectBet('ga', '🐓')">
                         <div class="board-icon">🐓</div>
                         <div class="board-label">Gà</div>
+                        <div class="bet-amount" id="bet-ga" style="display: none;">0</div>
                     </div>
-                    <div class="board-item">
+                    <div class="board-item" data-symbol="ca" onclick="selectBet('ca', '🐟')">
                         <div class="board-icon">🐟</div>
                         <div class="board-label">Cá</div>
+                        <div class="bet-amount" id="bet-ca" style="display: none;">0</div>
                     </div>
-                    <div class="board-item">
+                    <div class="board-item" data-symbol="cua" onclick="selectBet('cua', '🦀')">
                         <div class="board-icon">🦀</div>
                         <div class="board-label">Cua</div>
+                        <div class="bet-amount" id="bet-cua" style="display: none;">0</div>
                     </div>
-                    <div class="board-item">
+                    <div class="board-item" data-symbol="tom" onclick="selectBet('tom', '🦐')">
                         <div class="board-icon">🦐</div>
                         <div class="board-label">Tôm</div>
+                        <div class="bet-amount" id="bet-tom" style="display: none;">0</div>
                     </div>
                 </div>
 
@@ -287,15 +565,23 @@
             </div>
 
             <div class="history-panel">
-                <h2>📜 Lịch Sử Kết Quả</h2>
+                <h2>👥 Người Chơi</h2>
+                <div class="players-list" id="playersList"></div>
+                
+                <h2>📜 Lịch Sử</h2>
                 <div class="history-list" id="historyList">
-                    <p style="text-align: center; color: #999;">Chưa có kết quả nào...</p>
+                    <p style="text-align: center; color: #999;">Chưa có kết quả...</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <div class="result-message" id="resultMessage">
+        <h2 id="resultTitle"></h2>
+        <p id="resultText" style="font-size: 1.2em; margin: 20px 0;"></p>
+        <button onclick="closeResult()" style="padding: 10px 30px; font-size: 1.1em; background: #667eea; color: white; border: none; border-radius: 10px; cursor: pointer;">OK</button>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
@@ -310,24 +596,52 @@
             appId: "1:537842947289:web:8e4f8c5c9a3b2e1f4d5e6f"
         };
 
+        let database;
         try {
             firebase.initializeApp(firebaseConfig);
-            var database = firebase.database();
-            console.log("✅ Firebase connected successfully!");
+            database = firebase.database();
+            console.log("✅ Firebase connected!");
         } catch (error) {
-            console.error("❌ Firebase initialization error:", error);
-            alert("Không thể kết nối Firebase. Vui lòng kiểm tra kết nối internet.");
+            console.error("❌ Firebase error:", error);
         }
+
+        // Mapping symbols
+        const symbolMap = {
+            'nai': '🦌',
+            'bau': '🎃',
+            'ga': '🐓',
+            'ca': '🐟',
+            'cua': '🦀',
+            'tom': '🦐'
+        };
+
+        const symbolToKey = {
+            '🦌': 'nai',
+            '🎃': 'bau',
+            '🐓': 'ga',
+            '🐟': 'ca',
+            '🦀': 'cua',
+            '🦐': 'tom'
+        };
 
         let myUserId = null;
         let myName = null;
         let isHost = false;
-        const symbols = ['🦌', '🎃', '🐓', '🐟', '🦀', '🦐'];
+        let myMoney = 10000;
+        let selectedSymbol = null;
+        let currentBets = {};
         let gameRef, usersRef;
+        let isShaking = false;
 
-        function autoJoinGame() {
-            const randomNum = Math.floor(Math.random() * 10000);
-            myName = `Player_${randomNum}`;
+        function joinGame() {
+            const name = document.getElementById('nameInput').value.trim();
+            if (!name || name.length < 2) {
+                alert('Tên phải có ít nhất 2 ký tự!');
+                return;
+            }
+
+            document.getElementById('joinButton').disabled = true;
+            myName = name;
             myUserId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
             gameRef = database.ref('game');
@@ -338,12 +652,11 @@
                     const users = snapshot.val();
                     isHost = !users || Object.keys(users).length === 0;
 
-                    console.log('Is Host:', isHost);
-                    console.log('My Name:', myName);
-
                     return usersRef.child(myUserId).set({
                         name: myName,
                         isHost: isHost,
+                        money: 10000,
+                        bets: {},
                         joinedAt: firebase.database.ServerValue.TIMESTAMP
                     });
                 })
@@ -357,6 +670,10 @@
                     }
                 })
                 .then(() => {
+                    document.getElementById('nameSection').style.display = 'none';
+                    document.getElementById('moneyDisplay').style.display = 'inline-block';
+                    document.getElementById('mainContent').classList.add('active');
+
                     if (isHost) {
                         document.getElementById('shakeButton').disabled = false;
                     }
@@ -364,16 +681,102 @@
                     setupListeners();
                 })
                 .catch((error) => {
-                    console.error("Error joining game:", error);
-                    alert('Lỗi khi vào game: ' + error.message);
+                    console.error("Error:", error);
+                    alert('Lỗi: ' + error.message);
                 });
 
             window.addEventListener('beforeunload', () => {
                 if (myUserId && usersRef) {
                     usersRef.child(myUserId).remove();
-                    if (isHost && gameRef) {
-                        gameRef.remove();
-                    }
+                }
+            });
+        }
+
+        function selectBet(symbol, emoji) {
+            if (isShaking) {
+                alert('Đang lắc xúc xắc, vui lòng đợi!');
+                return;
+            }
+
+            selectedSymbol = symbol;
+            
+            // Remove all selected class
+            document.querySelectorAll('.board-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Add selected to clicked item
+            document.querySelector(`[data-symbol="${symbol}"]`).classList.add('selected');
+            
+            document.getElementById('selectedBet').textContent = `Đã chọn: ${emoji}`;
+            document.getElementById('placeBetBtn').disabled = false;
+        }
+
+        function setQuickBet(amount) {
+            document.getElementById('betAmount').value = amount;
+        }
+
+        function placeBet() {
+            const amount = parseInt(document.getElementById('betAmount').value);
+            
+            if (!selectedSymbol) {
+                alert('Vui lòng chọn 1 ô để cược!');
+                return;
+            }
+
+            if (!amount || amount <= 0) {
+                alert('Vui lòng nhập số tiền hợp lệ!');
+                return;
+            }
+
+            // Calculate total current bets
+            let totalCurrentBets = Object.values(currentBets).reduce((sum, bet) => sum + bet, 0);
+            
+            if (totalCurrentBets + amount > myMoney) {
+                alert('Không đủ tiền! Bạn còn: ' + myMoney + 'đ');
+                return;
+            }
+
+            // Add bet
+            if (!currentBets[selectedSymbol]) {
+                currentBets[selectedSymbol] = 0;
+            }
+            currentBets[selectedSymbol] += amount;
+
+            // Update display
+            updateBetDisplay();
+
+            // Save to Firebase
+            usersRef.child(myUserId).update({ bets: currentBets });
+
+            // Clear selection
+            document.getElementById('betAmount').value = '';
+            document.getElementById('selectedBet').textContent = `Cược ${amount}đ vào ${symbolMap[selectedSymbol]}`;
+        }
+
+        function clearBet() {
+            currentBets = {};
+            updateBetDisplay();
+            usersRef.child(myUserId).update({ bets: {} });
+            
+            document.querySelectorAll('.board-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            selectedSymbol = null;
+            document.getElementById('selectedBet').textContent = 'Đã xóa hết cược';
+            document.getElementById('placeBetBtn').disabled = true;
+        }
+
+        function updateBetDisplay() {
+            // Hide all bet amounts first
+            Object.keys(symbolMap).forEach(key => {
+                const el = document.getElementById(`bet-${key}`);
+                if (currentBets[key]) {
+                    el.textContent = currentBets[key] + 'đ';
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
                 }
             });
         }
@@ -381,25 +784,38 @@
         function setupListeners() {
             usersRef.on('value', (snapshot) => {
                 const users = snapshot.val();
-                if (!users) {
-                    document.getElementById('usersList').innerHTML = '👥 Không có ai online';
-                    return;
-                }
+                if (!users) return;
 
                 const userArray = Object.entries(users).map(([id, data]) => ({
                     id,
                     ...data
                 }));
 
+                // Update online list
                 const userListHTML = userArray.map(user => {
                     return user.name + (user.isHost ? '<span class="host-badge">HOST</span>' : '');
                 }).join(', ');
-
                 document.getElementById('usersList').innerHTML = `👥 Online (${userArray.length}): ${userListHTML}`;
 
+                // Update players list with money
+                const playersHTML = userArray.map(user => {
+                    const isMe = user.id === myUserId;
+                    if (isMe) myMoney = user.money;
+                    
+                    return `
+                        <div class="player-item ${isMe ? 'me' : ''}">
+                            <span class="player-name">${user.name}${user.isHost ? ' 👑' : ''}</span>
+                            <span class="player-money">${user.money.toLocaleString()}đ</span>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('playersList').innerHTML = playersHTML;
+                document.getElementById('myMoney').textContent = myMoney.toLocaleString();
+
+                // Check host
                 const hostExists = userArray.some(u => u.isHost);
                 if (!hostExists && !isHost) {
-                    alert('Host đã thoát! Game sẽ reset.');
+                    alert('Host đã thoát!');
                     window.location.reload();
                 }
             });
@@ -408,19 +824,28 @@
                 const gameData = snapshot.val();
                 if (!gameData) return;
 
+                isShaking = gameData.isShaking;
+
+                // Update dice
                 if (gameData.currentDice) {
                     document.getElementById('dice1').textContent = gameData.currentDice[0] || '❓';
                     document.getElementById('dice2').textContent = gameData.currentDice[1] || '❓';
                     document.getElementById('dice3').textContent = gameData.currentDice[2] || '❓';
                 }
 
+                // Update animation
                 const diceElements = document.querySelectorAll('.dice');
                 if (gameData.isShaking) {
                     diceElements.forEach(d => d.classList.add('shaking'));
+                    document.getElementById('bettingControls').style.opacity = '0.5';
+                    document.getElementById('bettingControls').style.pointerEvents = 'none';
                 } else {
                     diceElements.forEach(d => d.classList.remove('shaking'));
+                    document.getElementById('bettingControls').style.opacity = '1';
+                    document.getElementById('bettingControls').style.pointerEvents = 'all';
                 }
 
+                // Update history
                 if (gameData.history && gameData.history.length > 0) {
                     const historyHTML = gameData.history.slice(-20).reverse().map(item => {
                         const time = new Date(item.timestamp);
@@ -437,15 +862,13 @@
                         `;
                     }).join('');
                     document.getElementById('historyList').innerHTML = historyHTML;
-                } else {
-                    document.getElementById('historyList').innerHTML = '<p style="text-align: center; color: #999;">Chưa có kết quả nào...</p>';
                 }
             });
         }
 
         function shakeDice() {
             if (!isHost) {
-                alert('Chỉ host mới có quyền lắc xúc xắc!');
+                alert('Chỉ host mới lắc được!');
                 return;
             }
 
@@ -458,38 +881,127 @@
             });
 
             setTimeout(() => {
+                const symbols = ['🦌', '🎃', '🐓', '🐟', '🦀', '🦐'];
                 const result = [
                     symbols[Math.floor(Math.random() * 6)],
                     symbols[Math.floor(Math.random() * 6)],
                     symbols[Math.floor(Math.random() * 6)]
                 ];
 
-                gameRef.once('value')
-                    .then((snapshot) => {
-                        const currentData = snapshot.val();
-                        const currentHistory = currentData?.history || [];
+                // Calculate results for all players
+                usersRef.once('value').then(snapshot => {
+                    const users = snapshot.val();
+                    if (!users) return;
 
-                        return gameRef.update({
-                            isShaking: false,
-                            currentDice: result,
-                            history: [...currentHistory, {
-                                dice: result,
-                                timestamp: Date.now()
-                            }]
+                    Object.entries(users).forEach(([userId, userData]) => {
+                        if (!userData.bets || Object.keys(userData.bets).length === 0) return;
+
+                        let winnings = 0;
+                        let totalBet = 0;
+
+                        Object.entries(userData.bets).forEach(([symbol, amount]) => {
+                            totalBet += amount;
+                            const symbolEmoji = symbolMap[symbol];
+                            const matches = result.filter(r => r === symbolEmoji).length;
+
+                            if (matches > 0) {
+                                winnings += amount * matches;
+                            }
                         });
-                    })
-                    .then(() => {
-                        button.disabled = false;
-                    })
-                    .catch((error) => {
-                        console.error("Error updating game:", error);
-                        button.disabled = false;
+
+                        const newMoney = userData.money - totalBet + winnings;
+
+                        // Update user money and clear bets
+                        usersRef.child(userId).update({
+                            money: newMoney,
+                            bets: {}
+                        });
+
+                        // Show result to this player if it's me
+                        if (userId === myUserId) {
+                            setTimeout(() => {
+                                showResult(winnings, totalBet);
+                            }, 2500);
+                        }
                     });
+
+                    // Mark winning symbols
+                    document.querySelectorAll('.board-item').forEach(item => {
+                        item.classList.remove('winning');
+                    });
+                    
+                    result.forEach(symbol => {
+                        const key = symbolToKey[symbol];
+                        if (key) {
+                            document.querySelector(`[data-symbol="${key}"]`).classList.add('winning');
+                        }
+                    });
+                });
+
+                // Update game state
+                gameRef.once('value').then(snapshot => {
+                    const currentData = snapshot.val();
+                    const currentHistory = currentData?.history || [];
+
+                    return gameRef.update({
+                        isShaking: false,
+                        currentDice: result,
+                        history: [...currentHistory, {
+                            dice: result,
+                            timestamp: Date.now()
+                        }]
+                    });
+                }).then(() => {
+                    button.disabled = false;
+                    
+                    // Clear current bets display
+                    currentBets = {};
+                    updateBetDisplay();
+                    
+                    // Remove winning class after 3 seconds
+                    setTimeout(() => {
+                        document.querySelectorAll('.board-item').forEach(item => {
+                            item.classList.remove('winning');
+                        });
+                    }, 3000);
+                });
             }, 2000);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            autoJoinGame();
+        function showResult(winnings, totalBet) {
+            const resultDiv = document.getElementById('resultMessage');
+            const titleEl = document.getElementById('resultTitle');
+            const textEl = document.getElementById('resultText');
+
+            if (winnings > totalBet) {
+                resultDiv.className = 'result-message win show';
+                titleEl.textContent = '🎉 THẮNG! 🎉';
+                textEl.innerHTML = `Cược: ${totalBet.toLocaleString()}đ<br>Thắng: ${winnings.toLocaleString()}đ<br>Lãi: +${(winnings - totalBet).toLocaleString()}đ`;
+            } else if (winnings === totalBet) {
+                resultDiv.className = 'result-message show';
+                titleEl.textContent = '😐 HÒA';
+                textEl.innerHTML = `Cược: ${totalBet.toLocaleString()}đ<br>Hoàn lại: ${winnings.toLocaleString()}đ`;
+            } else if (winnings > 0) {
+                resultDiv.className = 'result-message lose show';
+                titleEl.textContent = '😢 THUA';
+                textEl.innerHTML = `Cược: ${totalBet.toLocaleString()}đ<br>Được: ${winnings.toLocaleString()}đ<br>Lỗ: -${(totalBet - winnings).toLocaleString()}đ`;
+            } else {
+                resultDiv.className = 'result-message lose show';
+                titleEl.textContent = '😭 THUA HẾT';
+                textEl.innerHTML = `Mất: ${totalBet.toLocaleString()}đ`;
+            }
+        }
+
+        function closeResult() {
+            document.getElementById('resultMessage').classList.remove('show');
+        }
+
+        document.getElementById('nameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') joinGame();
+        });
+
+        document.getElementById('betAmount').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') placeBet();
         });
     </script>
 </body>
